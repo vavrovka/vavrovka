@@ -130,36 +130,27 @@
         <div class="frame-tile frame-5"></div>
 
         <!-- Frame 6 -->
-        <div class="frame-tile frame-6" style="margin-bottom: clamp(10px, 20vh, 20px);"></div>
+        <div class="frame-tile frame-6" style="margin-bottom: clamp(0px, 20vh, 0px);"></div>
 
     </div>
 
     <script>
         const audio = document.getElementById('bgMusic');
 
-        function playFromStart() {
-            audio.currentTime = 0;
-            audio.play().catch(() => {
-                /* Autoplay blocked: waiting for interaction */
-            });
-        }
-
-        function unlockAudio() {
-            document.removeEventListener('pointerdown', unlockAudio);
-            document.removeEventListener('keydown', unlockAudio);
-            document.removeEventListener('touchstart', unlockAudio);
-            playFromStart();
+        async function playDirectly() {
+            try {
+                audio.muted = true;
+                await audio.play();
+                audio.currentTime = 0;
+                audio.muted = false;
+            } catch (err) {
+                console.warn('Autoplay blocked by browser policy', err);
+            }
         }
 
         function initAudio() {
             audio.load();
-            playFromStart();
-
-            if (audio.paused) {
-                document.addEventListener('pointerdown', unlockAudio, { once: true });
-                document.addEventListener('keydown', unlockAudio, { once: true });
-                document.addEventListener('touchstart', unlockAudio, { once: true });
-            }
+            playDirectly();
         }
 
         if (document.readyState === 'complete') {
