@@ -55,7 +55,7 @@
         .frame-3 { background-image: url('oval3.png'); }
         .frame-4 { background-image: url('oval4.png'); }
         .frame-5 { background-image: url('oval5.png'); }
-        .frame-6 { background-image: url('oval6.png'); }
+
         . text-box {
             text-align: center;
             line-height: 0.9;
@@ -72,6 +72,30 @@
         .size-3 { font-size: clamp(2.5rem, 5.625vw, 4.5rem); }
         .size-4 { font-size: clamp(2.3rem, 5.25vw, 4.2rem); }
         .size-5 { font-size: clamp(2.2rem, 5vw, 4.0rem); }
+
+        /* Audio Interaction Button (Required by 2025 Browser Autoplay Policies) */
+        #audio-trigger {
+            position: fixed;
+            bottom: clamp(15px, 3vh, 30px);
+            right: clamp(15px, 3vw, 30px);
+            z-index: 1000;
+            background: none;
+            border: 1px solid var(--olive-green);
+            color: var(--olive-green);
+            padding: clamp(6px, 1vh, 8px) clamp(12px, 2vw, 15px);
+            cursor: pointer;
+            border-radius: 20px;
+            font-family:  sans-serif;
+            font-size: clamp(9px, 1.5vw, 11px);
+            letter-spacing: 0.2em;
+            text-transform:  uppercase;
+            transition: all 0.3s ease;
+        }
+        
+        #audio-trigger: hover {
+            background: var(--olive-green);
+            color: white;
+        }
 
         /* Media queries for extra fine-tuning */
         @media (max-width: 768px) {
@@ -107,66 +131,67 @@
 </head>
 <body>
 
-    <audio id="bgMusic" autoplay loop preload="auto" playsinline>
-        <source src="wedding_loop.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
+    <audio id="bgMusic" autoplay loop>
+        <source src="wedding-music. mp3" type="audio/mpeg">
     </audio>
+
+    <button id="audio-trigger">Click to Play Music</button>
 
     <div class="scroll-container">
         
         <!-- Frame 1 -->
-        <div class="frame-tile frame-1"></div>
+        <div class="frame-tile frame-1">
+            <div class="text-box size-1">
+
+            </div>
+        </div>
 
         <!-- Frame 2 -->
-        <div class="frame-tile frame-2"></div>
+        <div class="frame-tile frame-2">
+            <div class="text-box size-2">
+
+            </div>
+        </div>
 
         <!-- Frame 3 -->
-        <div class="frame-tile frame-3"></div>
+        <div class="frame-tile frame-3">
+            <div class="text-box size-3">
+
+        </div>
 
         <!-- Frame 4 -->
-        <div class="frame-tile frame-4"></div>
+        <div class="frame-tile frame-4">
+            <div class="text-box size-4">
+
+                
+            </div>
+        </div>
 
         <!-- Frame 5 -->
-        <div class="frame-tile frame-5"></div>
-
-        <!-- Frame 6 -->
-        <div class="frame-tile frame-6" style="margin-bottom: clamp(10px, 20vh, 20px);"></div>
+        <div class="frame-tile frame-5" style="margin-bottom: clamp(100px, 20vh, 200px);">
+            <div class="text-box size-5">
+               
+            </div>
+        </div>
 
     </div>
 
     <script>
         const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('audio-trigger');
 
-        function playFromStart() {
-            audio.currentTime = 0;
-            audio.play().catch(() => {
-                /* Autoplay blocked: waiting for interaction */
-            });
+        // Handles the "Autoplay" block modern browsers enforce
+        function handlePlay() {
+            audio.play();
+            btn.style.display = 'none'; // Hide button once music starts
         }
 
-        function unlockAudio() {
-            document.removeEventListener('pointerdown', unlockAudio);
-            document.removeEventListener('keydown', unlockAudio);
-            document.removeEventListener('touchstart', unlockAudio);
-            playFromStart();
-        }
+        // Trigger on button click
+        btn.addEventListener('click', handlePlay);
 
-        function initAudio() {
-            audio.load();
-            playFromStart();
-
-            if (audio.paused) {
-                document.addEventListener('pointerdown', unlockAudio, { once: true });
-                document.addEventListener('keydown', unlockAudio, { once: true });
-                document.addEventListener('touchstart', unlockAudio, { once: true });
-            }
-        }
-
-        if (document.readyState === 'complete') {
-            initAudio();
-        } else {
-            window.addEventListener('load', initAudio, { once: true });
-        }
+        // Also trigger as soon as the user interacts with the page (scrolling/clicking)
+        window.addEventListener('click', handlePlay, { once:  true });
+        window.addEventListener('scroll', handlePlay, { once:  true });
     </script>
 
 </body>
